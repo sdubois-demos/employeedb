@@ -1,15 +1,12 @@
 package com.coresoftware.springboot.EmployeeDB.dao;
 
 import com.coresoftware.springboot.EmployeeDB.entity.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
-	// that's it ... no need to write any code LOL!
-
-    // add a method to sort by last name
-    public List<Employee> findAllByOrderByLastNameAsc();
-
+    // Method to retrieve employees sorted dynamically with pagination
+    Page<Employee> findAll(Pageable pageable);
 }

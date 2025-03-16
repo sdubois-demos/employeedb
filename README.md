@@ -31,6 +31,6 @@ jenkins@buildhost:~$ docker tag employeedb:1.2.0 sadubois/employeedb:1.2.0
 jenkins@buildhost:~$ docker push sadubois/employeedb:1.2.0
 
 
-docker build -f Dockerfile --build-arg JAR_FILE=target/employeedb-1.2.0.jar --build-arg IMAGE_VERSION=1.2.0  -t employeedb:1.2.0 .
-docker tag employeedb:1.2.0 sadubois/employeedb:1.2.0
-docker push sadubois/employeedb:1.2.0
+docker build -f Dockerfile --build-arg JAR_FILE=target/employeedb-1.2.0.jar --build-arg IMAGE_VERSION=1.3.1  -t employeedb:1.3.1 .
+docker tag employeedb:1.2.0 sadubois/employeedb:1.3.1
+docker push sadubois/employeedb:1.3.1

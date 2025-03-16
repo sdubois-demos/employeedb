@@ -1,22 +1,50 @@
 openapi: 3.0.3
 info:
   title: Employee API
-  description: CRUD operations for employee management
+  description: API for managing employees
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api
-    description: Local development server
-tags:
-  - name: Employees
-    description: Employee management operations
+  - url: http://10.0.20.237/api
+  - url: https://edb.apps.fortidemo.ch/api
+  - url: https://edb.apps.tkg.fortidemo.ch/api
 paths:
   /employees:
     get:
-      tags: [Employees]
-      summary: Get all employees sorted by last name
+      summary: Get all employees
+      operationId: getAllEmployees
+      parameters:
+        - name: debug
+          in: header
+          required: false
+          schema:
+            type: boolean
+        - name: size
+          in: header
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The maximum number of employees to return
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: The number of employees to skip before returning results
+        - name: sort_by
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [id, first_name, last_name, email, -id, -first_name, -last_name, -email]
+          description: Sort employees by the given field. Prefix with '-' for descending order.
       responses:
         '200':
-          description: Successful operation
+          description: A list of employees sorted by the specified criteria
           content:
             application/json:
               schema:
@@ -24,8 +52,8 @@ paths:
                 items:
                   $ref: '#/components/schemas/Employee'
     post:
-      tags: [Employees]
       summary: Create a new employee
+      operationId: createEmployee
       requestBody:
         required: true
         content:
@@ -34,15 +62,15 @@ paths:
               $ref: '#/components/schemas/Employee'
       responses:
         '201':
-          description: Employee created
+          description: Employee created successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Employee'
   /employees/{id}:
     get:
-      tags: [Employees]
-      summary: Get employee by ID
+      summary: Get an employee by ID
+      operationId: getEmployeeById
       parameters:
         - name: id
           in: path
@@ -51,7 +79,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: Successful operation
+          description: Employee details
           content:
             application/json:
               schema:
@@ -59,8 +87,8 @@ paths:
         '404':
           description: Employee not found
     put:
-      tags: [Employees]
-      summary: Update existing employee
+      summary: Update an existing employee
+      operationId: updateEmployee
       parameters:
         - name: id
           in: path
@@ -75,14 +103,16 @@ paths:
               $ref: '#/components/schemas/Employee'
       responses:
         '200':
-          description: Employee updated
+          description: Employee updated successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found
     delete:
-      tags: [Employees]
-      summary: Delete employee
+      summary: Delete an employee
+      operationId: deleteEmployee
       parameters:
         - name: id
           in: path
@@ -91,19 +121,16 @@ paths:
             type: integer
       responses:
         '204':
-          description: Employee deleted
+          description: Employee deleted successfully
+        '404':
+          description: Employee not found
 components:
   schemas:
     Employee:
       type: object
-      required:
-        - firstName
-        - lastName
-        - email
       properties:
         id:
           type: integer
-          readOnly: true
           example: 1
         firstName:
           type: string
@@ -114,4 +141,4 @@ components:
         email:
           type: string
           format: email
-          example: john.doe@example.com
+          example: johndoe@example.com
