@@ -12,7 +12,7 @@
 	
 	<groupId>com.luv2code.springboot</groupId>
 	<artifactId>employeedb</artifactId>
-	<version>1.2.0</version>
+	<version>1.4.0</version>
 	<name>employeedb</name>
 	<description>Demo project for Spring Boot</description>
 	

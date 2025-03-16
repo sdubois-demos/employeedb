@@ -15,6 +15,8 @@ public class DebugController {
         return getHttpHeaders(request);
     }
 
+
+
     private Map<String, String> getHttpHeaders(HttpServletRequest request) {
         Map<String, String> headersMap = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malignancy Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Malignancy Simulation</h1>
+    <form method="POST">
+        <label for="initial_cells">Initial Cells</label>
+        <input type="number" id="initial_cells" name="initial_cells" required>
+
+        <label for="growth_rate">Growth Rate</label>
+        <input type="text" id="growth_rate" name="growth_rate" required>
+
+        <label for="max_cells">Maximum Cells</label>
+        <input type="number" id="max_cells" name="max_cells" required>
+
+        <label for="time_steps">Time Steps</label>
+        <input type="number" id="time_steps" name="time_steps" required>
+
+        <input type="submit" value="Simulate">
+    </form>
+
+    {% if image_base64 %}
+    <h2>Simulation Result:</h2>
+    <img src="data:image/png;base64,{{ image_base64 }}" alt="Tumor Growth Simulation">
+    {% endif %}
+</div>
+</body>
+</html>
