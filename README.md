@@ -26,7 +26,7 @@ curl -X GET http://localhost:8080/api/employees
 curl -X GET http://localhost:8080/actuator | jq -r
 
 # Build Docker Image
-export BUILD_VERSION=1.4.1
+export BUILD_VERSION=1.4.2
 docker build -f Dockerfile --build-arg JAR_FILE=target/employeedb-$BUILD_VERSION.jar --build-arg IMAGE_VERSION=$BUILD_VERSION  -t employeedb:$BUILD_VERSION .
 docker tag employeedb:$BUILD_VERSION sadubois/employeedb:$BUILD_VERSION
 docker push sadubois/employeedb:$BUILD_VERSION
