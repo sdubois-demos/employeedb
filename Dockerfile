@@ -26,10 +26,13 @@ COPY --from=builder /usr/local/temp/snapshot-dependencies/ ./
 COPY --from=builder /usr/local/temp/application/ ./
 
 # Set environment variables for Spring profile and datasource
-ENV SPRING_PROFILES_ACTIVE=production
+ENV SPRING_PROFILES_ACTIVE=fabric-studio
 
 # Expose the default Spring Boot application port
 EXPOSE 8080
 
 # Use JarLauncher and pass the datasource credentials via environment variables
-ENTRYPOINT ["java", "-Dspring.datasource.username=${SPRING_DATASOURCE_USERNAME}", "-Dspring.datasource.password=${SPRING_DATASOURCE_PASSWORD}", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT java \
+  -Dspring.datasource.username=$SPRING_DATASOURCE_USERNAME \
+  -Dspring.datasource.password=$SPRING_DATASOURCE_PASSWORD \
+  org.springframework.boot.loader.launch.JarLauncher
