@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ "$1" == "" ]; then 
+  echo "$0 USAGE $0 <url>"
+  echo "         Testing URL's: http://localhost:8080            # Local Deployment"
+  echo "                        https://edb.apps.fortidemo.ch"      
+  echo "            
+  exit 1
+fi
+
 URL="http://localhost:8080"
 API="api"
 PYTHONDEV=/tmp/pythondev 

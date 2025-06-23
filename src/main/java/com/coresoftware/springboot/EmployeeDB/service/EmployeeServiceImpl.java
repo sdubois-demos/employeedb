@@ -40,6 +40,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 		validSortFields.put("first_name", "firstName");
 		validSortFields.put("last_name", "lastName");
 
+		// Determine sort direction
+		boolean descending = sortBy != null && sortBy.startsWith("-");
+		String sortKey = (sortBy != null) ? sortBy.replace("-", "") : "last_name";
+		String sortField = validSortFields.getOrDefault(sortKey, "lastName");
+
+		Sort.Direction direction = descending ? Sort.Direction.DESC : Sort.Direction.ASC;
+		Pageable pageable = PageRequest.of(offset / limit, limit, Sort.by(direction, sortField));
+
+		Page<Employee> page = employeeRepository.findAll(pageable);
+		return page.getContent(); // Extract the list of employees
+	}
+
+	/*
+	public List<Employee> findAll(Integer limit, Integer offset, String sortBy) {
+		if (limit == null || limit <= 0) {
+			limit = Integer.MAX_VALUE; // Fetch all if no limit specified
+		}
+		if (offset == null || offset < 0) {
+			offset = 0; // Default offset to 0
+		}
+
+		// Map valid column names to actual entity field names
+		Map<String, String> validSortFields = new HashMap<>();
+		validSortFields.put("id", "id");
+		validSortFields.put("email", "email");
+		validSortFields.put("first_name", "firstName");
+		validSortFields.put("last_name", "lastName");
+
 		// Default sorting by last name if sort_by is invalid
 		String sortField = validSortFields.getOrDefault(sortBy, "lastName");
 
@@ -49,6 +77,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		return page.getContent(); // Extract the list of employees
 	}
+	 */
 
 	@Override
 	public Employee findById(int theId) {

@@ -3,71 +3,75 @@ info:
   title: Employee API
   description: API for managing employees
   version: 1.0.0
+
 servers:
-  - url: http://10.0.20.237/api
-  - url: https://edb.apps.fortidemo.ch/api
-  - url: https://edb.apps.tkg.fortidemo.ch/api
+  - url: https://edb.apps.fortidemo.net
+  - url: https://edb.apps-int.fortidemo.net
+
 paths:
-  /employees:
+  /api/employees:
     get:
       summary: Get all employees
       operationId: getAllEmployees
       parameters:
-        - name: debug
-          in: header
-          required: false
-          schema:
-            type: boolean
-        - name: size
-          in: header
-          required: false
-          schema:
-            type: integer
         - name: limit
           in: query
           required: false
           schema:
             type: integer
-          description: The maximum number of employees to return
+          description: Maximum number of employees to return
         - name: offset
           in: query
           required: false
           schema:
             type: integer
-          description: The number of employees to skip before returning results
+          description: Number of employees to skip before returning results
         - name: sort_by
           in: query
           required: false
           schema:
             type: string
-            enum: [id, first_name, last_name, email, -id, -first_name, -last_name, -email]
-          description: Sort employees by the given field. Prefix with '-' for descending order.
+            enum: [id, firstName, lastName, email, -id, -firstName, -lastName, -email]
+          description: Field to sort by. Prefix with '-' for descending order.
       responses:
         '200':
-          description: A list of employees sorted by the specified criteria
+          description: A list of employees
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Employee'
+
     post:
-      summary: Create a new employee
-      operationId: createEmployee
+      summary: Create new employees
+      operationId: createEmployees
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Employee'
+              type: array
+              items:
+                $ref: '#/components/schemas/Employee'
       responses:
         '201':
-          description: Employee created successfully
+          description: Employees created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Employee'
-  /employees/{id}:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+
+    delete:
+      summary: Delete all employees
+      operationId: deleteAllEmployees
+      responses:
+        '204':
+          description: All employees deleted
+
+  /api/employee/{id}:
     get:
       summary: Get an employee by ID
       operationId: getEmployeeById
@@ -86,6 +90,7 @@ paths:
                 $ref: '#/components/schemas/Employee'
         '404':
           description: Employee not found
+
     put:
       summary: Update an existing employee
       operationId: updateEmployee
@@ -103,13 +108,14 @@ paths:
               $ref: '#/components/schemas/Employee'
       responses:
         '200':
-          description: Employee updated successfully
+          description: Employee updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Employee'
         '404':
           description: Employee not found
+
     delete:
       summary: Delete an employee
       operationId: deleteEmployee
@@ -121,9 +127,10 @@ paths:
             type: integer
       responses:
         '204':
-          description: Employee deleted successfully
+          description: Employee deleted
         '404':
           description: Employee not found
+
 components:
   schemas:
     Employee:
@@ -141,4 +148,4 @@ components:
         email:
           type: string
           format: email
-          example: johndoe@example.com
+          example: john.doe@example.com
