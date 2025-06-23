@@ -14,6 +14,16 @@ paths:
       summary: Get all employees
       operationId: getAllEmployees
       parameters:
+        - name: debug
+          in: header
+          required: false
+          schema:
+            type: boolean
+        - name: size
+          in: header
+          required: false
+          schema:
+            type: integer
         - name: limit
           in: query
           required: false

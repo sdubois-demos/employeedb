@@ -24,7 +24,9 @@ public class EmployeeAPIController {
     public ResponseEntity<List<Employee>> getAllEmployees(
             @RequestParam(value = "limit", required = false) Integer limit,
             @RequestParam(value = "offset", required = false) Integer offset,
-            @RequestParam(value = "sort_by", required = false) String sortBy) {
+            @RequestParam(value = "sort_by", required = false) String sortBy,
+            @RequestHeader(value = "debug", required = false) Boolean debug,
+            @RequestHeader(value = "size", required = false) Integer size) {
         return ResponseEntity.ok(employeeService.findAll(limit, offset, sortBy));
     }
 
