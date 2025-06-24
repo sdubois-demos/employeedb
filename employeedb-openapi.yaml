@@ -6,7 +6,6 @@ info:
 servers:
   - url: https://edb.apps.fortidemo.net
   - url: https://edb.apps-int.fortidemo.net
-
 paths:
   /api/employees:
     get:
@@ -52,7 +51,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Employee'
     post:
-      summary: Create new employees in bulk
+      summary: Create new employees (bulk)
       operationId: createEmployees
       requestBody:
         required: true
@@ -78,9 +77,67 @@ paths:
         '204':
           description: All employees deleted successfully
 
-  /api/employees/employee:
+  /api/employee/{id}:
     get:
-      summary: Get an employee by ID (via query parameter)
+      summary: Get employee by ID (path param)
+      operationId: getEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Employee details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found
+    put:
+      summary: Update employee by ID (path param)
+      operationId: updateEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found
+    delete:
+      summary: Delete employee by ID (path param)
+      operationId: deleteEmployeeById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Employee deleted successfully
+        '404':
+          description: Employee not found
+
+  /api/employee:
+    get:
+      summary: Get employee by ID (query param)
       operationId: getEmployeeByIdQuery
       parameters:
         - name: id
@@ -97,8 +154,9 @@ paths:
                 $ref: '#/components/schemas/Employee'
         '404':
           description: Employee not found
+
     put:
-      summary: Update an employee by ID (via query parameter)
+      summary: Update employee by ID (query param)
       operationId: updateEmployeeByIdQuery
       parameters:
         - name: id
@@ -121,8 +179,9 @@ paths:
                 $ref: '#/components/schemas/Employee'
         '404':
           description: Employee not found
+
     delete:
-      summary: Delete an employee by ID (via query parameter)
+      summary: Delete employee by ID (query param)
       operationId: deleteEmployeeByIdQuery
       parameters:
         - name: id
@@ -154,3 +213,4 @@ components:
           type: string
           format: email
           example: johndoe@example.com
+
