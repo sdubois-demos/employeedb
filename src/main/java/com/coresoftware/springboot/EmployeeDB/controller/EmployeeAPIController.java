@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -41,6 +42,30 @@ public class EmployeeAPIController {
     @DeleteMapping
     public ResponseEntity<Void> deleteAllEmployees() {
         employeeService.deleteAll();
+        return ResponseEntity.noContent().build();
+    }
+
+    // Get a single employee by query parameter
+    @GetMapping("/employee")
+    public ResponseEntity<Employee> getEmployeeByIdQuery(@RequestParam("id") int id) {
+        Employee employee = employeeService.findById(id);
+        return ResponseEntity.ok(employee);
+    }
+
+    // Update an employee using query parameter
+    @PutMapping("/employee")
+    public ResponseEntity<Employee> updateEmployeeByQuery(@RequestParam("id") int id, @RequestBody Employee updatedEmployee) {
+        Employee existing = employeeService.findById(id);
+        existing.setFirstName(updatedEmployee.getFirstName());
+        existing.setLastName(updatedEmployee.getLastName());
+        existing.setEmail(updatedEmployee.getEmail());
+        return ResponseEntity.ok(employeeService.save(existing));
+    }
+
+    // Delete an employee using query parameter
+    @DeleteMapping("/employee")
+    public ResponseEntity<Void> deleteEmployeeByQuery(@RequestParam("id") int id) {
+        employeeService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
