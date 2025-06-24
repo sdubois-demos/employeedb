@@ -18,9 +18,16 @@ public class SingleEmployeeAPIController {
         this.employeeService = employeeService;
     }
 
-    // Get employee by ID
+    // Get employee by ID (path)
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable int id) {
+        Employee employee = employeeService.findById(id);
+        return ResponseEntity.ok(employee);
+    }
+
+    // Get employee by ID (query)
+    @GetMapping
+    public ResponseEntity<Employee> getEmployeeByIdQuery(@RequestParam("id") int id) {
         Employee employee = employeeService.findById(id);
         return ResponseEntity.ok(employee);
     }
@@ -32,7 +39,7 @@ public class SingleEmployeeAPIController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
     }
 
-    // Update existing employee
+    // Update employee by ID (path)
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(
             @PathVariable int id,
@@ -41,13 +48,31 @@ public class SingleEmployeeAPIController {
         existingEmployee.setFirstName(employeeDetails.getFirstName());
         existingEmployee.setLastName(employeeDetails.getLastName());
         existingEmployee.setEmail(employeeDetails.getEmail());
-        Employee updatedEmployee = employeeService.save(existingEmployee);
-        return ResponseEntity.ok(updatedEmployee);
+        return ResponseEntity.ok(employeeService.save(existingEmployee));
     }
 
-    // Delete employee by ID
+    // Update employee by ID (query)
+    @PutMapping
+    public ResponseEntity<Employee> updateEmployeeQuery(
+            @RequestParam("id") int id,
+            @RequestBody Employee employeeDetails) {
+        Employee existingEmployee = employeeService.findById(id);
+        existingEmployee.setFirstName(employeeDetails.getFirstName());
+        existingEmployee.setLastName(employeeDetails.getLastName());
+        existingEmployee.setEmail(employeeDetails.getEmail());
+        return ResponseEntity.ok(employeeService.save(existingEmployee));
+    }
+
+    // Delete employee by ID (path)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable int id) {
+        employeeService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Delete employee by ID (query)
+    @DeleteMapping
+    public ResponseEntity<Void> deleteEmployeeQuery(@RequestParam("id") int id) {
         employeeService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
