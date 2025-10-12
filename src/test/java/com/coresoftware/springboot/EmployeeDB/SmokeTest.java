@@ -13,8 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.coresoftware.springboot.EmployeeDB.controller.HelloController;
 import org.springframework.test.web.servlet.MockMvc;
 
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
-@AutoConfigureMockMvc
 public class SmokeTest {
         @Autowired
         private HelloController controller;
