@@ -12,7 +12,7 @@
 
     <groupId>com.coresoftware.springboot</groupId>
     <artifactId>employeedb</artifactId>
-    <version>1.4.8</version>
+    <version>1.5.0</version>
     <name>employeedb</name>
     <description>Demo project for Spring Boot</description>
 
