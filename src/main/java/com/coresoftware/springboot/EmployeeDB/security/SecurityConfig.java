@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,14 +25,35 @@ public class SecurityConfig {
     @Value("${edb.authentication:none}")
     private String mode;
 
+    @Value("${edb.saml.idp-logout-url:https://fortiauth.fortidemo.ch/saml-idp/employeedb/logout/}")
+    private String idpLogoutUrl;
+
+    @Value("${edb.server-base-url:http://localhost:8080}")
+    private String serverBaseUrl;
+
+    @Value("${edb.saml.post-logout-redirect:/}")
+    private String postLogoutRedirect;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**",
-                                "/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+                        // Public pages & assets
+                        .requestMatchers("/", "/index.html",
+                                "/css/**", "/js/**", "/images/**", "/webjars/**",
+                                // Observability & debug
+                                "/actuator/**", "/debug/**",
+                                // Public list page should not force SSO
+                                "/employees/list",
+                                // SAML endpoints + metadata + logout endpoint itself
+                                "/saml2/authenticate/**", "/saml2/service-provider-metadata/**",
+                                "/logout", "/logout/saml2/slo", "/logout/saml2/slo/**").permitAll()
+                        // Protect anything that mutates data
+                        .requestMatchers("/employees/showFormForAdd", "/employees/save",
+                                "/employees/delete/**", "/employees/updateForm/**").authenticated()
+                        // Default: anything else is allowed (keeps UX open unless you add new admin paths)
+                        .anyRequest().permitAll()
                 );
 
         switch (mode) {
@@ -44,9 +68,30 @@ public class SecurityConfig {
                 // AuthN is provided by the LDAP AuthenticationManager bean below
             }
             case "saml" -> {
-                http
-                        .saml2Login(Customizer.withDefaults())     // /saml2/authenticate/{registrationId}
-                        .logout(l -> l.logoutSuccessUrl("/"));
+                // Keep SAML2 login
+                http.saml2Login(Customizer.withDefaults());
+
+                // Manual RP logout fallback:
+                //  - Invalidate local SP session
+                //  - Then redirect browser to IdP SLO endpoint (FAC tenant)
+                http.logout(l -> l
+                        .logoutUrl("/logout/saml2/slo")        // Sign out link points here
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            // Build RelayState target back to the app (serverBaseUrl + postLogoutRedirect)
+                            String target = serverBaseUrl.endsWith("/")
+                                    ? serverBaseUrl + (postLogoutRedirect.startsWith("/") ? postLogoutRedirect.substring(1) : postLogoutRedirect)
+                                    : serverBaseUrl + (postLogoutRedirect.startsWith("/") ? postLogoutRedirect : ("/" + postLogoutRedirect));
+
+                            String redirect = idpLogoutUrl
+                                    + (idpLogoutUrl.contains("?") ? "&" : "?")
+                                    + "RelayState="
+                                    + URLEncoder.encode(target, StandardCharsets.UTF_8);
+
+                            response.sendRedirect(redirect);
+                        })
+                );
             }
             default -> throw new IllegalStateException("Unknown edb.authentication mode: " + mode);
         }

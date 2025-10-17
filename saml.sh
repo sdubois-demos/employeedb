@@ -1,4 +1,5 @@
 #!/bin/bash
+# http://localhost:8080/employees/list
 
 # --- Switch app to SAML mode ---
 export EDB_AUTHENTICATION=saml
@@ -11,7 +12,9 @@ export SERVER_BASE_URL='http://localhost:8080'
 export EDB_SAML_ENTITY_ID='employeedb.fortidemo.ch'
 
 # --- IMPORTANT: use the tenant-specific IdP metadata URL (NOT /saml-idp/metadata) ---
-export EDB_SAML_IDP_METADATA_URI='https://fortiauth.fortidemo.ch/saml-idp/cz5n58tpsiwwij00/metadata/'
+export EDB_SAML_IDP_METADATA_URI='https://fortiauth.fortidemo.ch/saml-idp/employeedb/metadata/'
+export EDB_SAML_IDP_LOGOUT_URL='https://fortiauth.fortidemo.ch/saml-idp/employeedb/logout/'
+export EDB_SAML_POST_LOGOUT_REDIRECT='/'
 
 # --- Spring relaxed-binding equivalents to ensure Spring Security SAML picks it up ---
 export SPRING_SECURITY_SAML2_RELYINGPARTY_REGISTRATION_FORTIAUTH_ASSERTINGPARTY_METADATA_URI="$EDB_SAML_IDP_METADATA_URI"
