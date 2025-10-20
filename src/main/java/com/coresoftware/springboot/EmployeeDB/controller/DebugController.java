@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 
 public class DebugController {
-    @GetMapping("/debug/header")
+    @GetMapping("/debug/headers")
     public Map<String, String> getDebug(HttpServletRequest request) {
         return getHttpHeaders(request);
     }
@@ -28,6 +28,24 @@ public class DebugController {
             headersMap.put(headerName, headerValue);
         }
         return headersMap;
+    }
+
+    @GetMapping("/debug/request")
+    public Map<String, Object> requestInfo(HttpServletRequest req) {
+        Map<String, Object> m = new HashMap<>();
+        m.put("scheme", req.getScheme());          // http or https after ForwardedHeaderFilter
+        m.put("serverName", req.getServerName());  // expected: edb.apps-adc.fortidemo.net
+        m.put("serverPort", req.getServerPort());  // expected: 443
+        m.put("isSecure", req.isSecure());
+        m.put("requestURL", req.getRequestURL().toString());
+        // include raw headers too
+        Map<String,String> hdrs = new HashMap<>();
+        for (var e = req.getHeaderNames(); e.hasMoreElements();) {
+            var h = e.nextElement();
+            hdrs.put(h, req.getHeader(h));
+        }
+        m.put("headers", hdrs);
+        return m;
     }
 
     @GetMapping("/debug/auth")
